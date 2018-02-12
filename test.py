@@ -1,6 +1,7 @@
 import urllib.request, json 
+from google.cloud import datastore
 
-url = "https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json?lat=47.449474&lng=-122.309912&fDstL=0&fDstU=50"
+url = "https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json?lat=47.449474&lng=-122.309912&fDstL=0&fDstU=5"
 req = urllib.request.Request(
     url, 
     data=None, 
@@ -9,6 +10,33 @@ req = urllib.request.Request(
     }
 )
 
+# Instantiates a client
+datastore_client = datastore.Client()
+
+# The kind for the new entity
+kind = 'FlightPoint'
+
+data = []
+
 with urllib.request.urlopen(req) as page:
     data = json.loads(page.read().decode())
-    print(data)
+
+print(len(data['acList']))
+for flight in data['acList']:
+    # The name/ID for the new entity
+    name = str(flight['Id']) + '-' + str(flight['PosTime'])
+    # The Cloud Datastore key for the new entity
+    flight_point_key = datastore_client.key(kind, name)
+    # Create the entity
+    flight_point = datastore.Entity(key=flight_point_key)
+    for k,v in flight.items():
+        flight_point[k] = v
+        
+    datastore_client.put(flight_point)
+
+query = datastore_client.query(kind='FlightPoint')
+query.add_filter('To', '=', "KSEA Seattle Tacoma, United States")
+
+query_iter = query.fetch()
+for entity in query_iter:
+    print(entity)
