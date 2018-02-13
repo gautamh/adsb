@@ -1,4 +1,5 @@
 import urllib.request, json 
+import time
 from google.cloud import datastore
 
 url = "https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json?lat=47.449474&lng=-122.309912&fDstL=0&fDstU=5"
@@ -10,33 +11,39 @@ req = urllib.request.Request(
     }
 )
 
+samples = 30
+delay = 30
+
 # Instantiates a client
 datastore_client = datastore.Client()
 
 # The kind for the new entity
 kind = 'FlightPoint'
 
-data = []
+for i in range(samples):
+    data = []
 
-with urllib.request.urlopen(req) as page:
-    data = json.loads(page.read().decode())
+    with urllib.request.urlopen(req) as page:
+        data = json.loads(page.read().decode())
 
-print(len(data['acList']))
-for flight in data['acList']:
-    # The name/ID for the new entity
-    name = str(flight['Id']) + '-' + str(flight['PosTime'])
-    # The Cloud Datastore key for the new entity
-    flight_point_key = datastore_client.key(kind, name)
-    # Create the entity
-    flight_point = datastore.Entity(key=flight_point_key)
-    for k,v in flight.items():
-        flight_point[k] = v
+    print(len(data['acList']))
+    for flight in data['acList']:
+        # The name/ID for the new entity
+        name = str(flight['Id']) + '-' + str(flight['PosTime'])
+        # The Cloud Datastore key for the new entity
+        flight_point_key = datastore_client.key(kind, name)
+        # Create the entity
+        flight_point = datastore.Entity(key=flight_point_key)
+        for k,v in flight.items():
+            flight_point[k] = v
         
-    datastore_client.put(flight_point)
+        datastore_client.put(flight_point)
 
-query = datastore_client.query(kind='FlightPoint')
-query.add_filter('To', '=', "KSEA Seattle Tacoma, United States")
+    #query = datastore_client.query(kind='FlightPoint')
+    #query.add_filter('To', '=', "KSEA Seattle Tacoma, United States")
 
-query_iter = query.fetch()
-for entity in query_iter:
-    print(entity)
+    #query_iter = query.fetch()
+    #for entity in query_iter:
+        #pass
+        #print(entity)
+    time.sleep(delay)
