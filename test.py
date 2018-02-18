@@ -2,7 +2,14 @@ import urllib.request, json
 import time
 from google.cloud import datastore
 
-url = "https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json?lat=47.449474&lng=-122.309912&fDstL=0&fDstU=5"
+# KSEA lat and long
+airport_lat = 47.449474
+airport_long = -122.309912
+
+# Radius from airport (in mi?) to track flights
+radius_from_airport = 15
+
+url = "https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json?lat={}&lng={}&fDstL=0&fDstU={}".format(airport_lat, airport_long, radius_from_airport)
 req = urllib.request.Request(
     url, 
     data=None, 
