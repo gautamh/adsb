@@ -8,8 +8,8 @@ m = folium.Map(location=[47.449474, -122.309912])
 
 query = datastore_client.query(kind='FlightPoint')
 #query.add_filter('To', '=', "KSEA Seattle Tacoma, United States")
-query.add_filter('Alt', '>', 50)
-query.add_filter('Alt', '<', 2500)
+#query.add_filter('Alt', '>', 50)
+#query.add_filter('Alt', '<', 2500)
 
 query_iter = query.fetch()
 for entity in query_iter:
