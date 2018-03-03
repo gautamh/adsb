@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import pdb
 import sys
 
 import folium
@@ -38,9 +39,10 @@ for entity in query_iter:
     time = entity['PosTime']
     if 'Call' in entity:
         if entity['Call'] in flights:
-            if flights[entity['Call']][-1][0] == flight_lat and flights[entity['Call']][-1][1] == flight_long:
+            if (flight_lat, flight_long) in [(x[0], x[1]) for x in flights[entity['Call']]]:
                 continue
             flights[entity['Call']].append((flight_lat, flight_long, time, entity['Call']))
+            flights[entity['Call']].sort(key=lambda x: x[2])
         else:
             flights[entity['Call']] = [(flight_lat, flight_long, time, entity['Call'])]
         #label = entity['Call'] + " " + str(entity['Alt'])
