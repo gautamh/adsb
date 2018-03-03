@@ -29,13 +29,17 @@ def load_tracts():
 
 
 def get_triangle_tract_intersection(tracts, studyareas):
-    print(studyareas)
-    intersect_tracts = tracts[tracts.geometry.intersects(studyareas[0]) | tracts.geometry.intersects(studyareas[1])]
-    left_pop = np.sum(intersect_tracts[intersect_tracts.geometry.intersects(studyareas[0])]['DP0010001'])
-    right_pop = np.sum(intersect_tracts[intersect_tracts.geometry.intersects(studyareas[1])]['DP0010001'])
-    print("Left pop: {}".format(left_pop))
-    print("Right pop: {}".format(right_pop))
+    intersecting_tracts = tracts.geometry.intersects(studyareas[0])
+    for area in studyareas[1:]:
+        intersecting_tracts = intersecting_tracts | tracts.geometry.intersects(area)
+    intersect_tracts = tracts[intersecting_tracts]
     return intersect_tracts
+
+
+def get_intersect_left_right_values(tracts, studyareas, value_key):
+    left_value_sum = np.sum(intersect_tracts[intersect_tracts.geometry.intersects(studyareas[::2])][value_key])
+    right_value_sum = np.sum(intersect_tracts[intersect_tracts.geometry.intersects(studyareas[1::2])][value_key])
+    return(left_value_sum, right_value_sum)
 
 
 def plot_tracts_and_triangles(tracts, studyareas):
@@ -45,6 +49,16 @@ def plot_tracts_and_triangles(tracts, studyareas):
     df1.plot(ax=tractplot, color='green', alpha=0.5)
     plt.show()
 
+
+def plot_tracts_from_line_list(line_list):
+    studyareas = []
+    for p1,p2 in zip(line_list, line_list[1:]):
+        print([p1, p2])
+        left_right = generate_viewing_triangles(p1[1], p1[0], p2[1], p2[0], 0.1)
+        studyareas.extend(left_right)
+    tracts = load_tracts()
+    intersect_tracts = get_triangle_tract_intersection(tracts, studyareas)
+    plot_tracts_and_triangles(intersect_tracts, studyareas)
 
 def run_dca_plot():
     tracts = load_tracts()
