@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import sys
 
@@ -12,6 +13,9 @@ import shapely
 
 import plot_tracts
 
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO)
+
 # Instantiates a client
 datastore_client = datastore.Client()
 
@@ -21,13 +25,13 @@ query = datastore_client.query(kind='FlightPoint')
 #query.add_filter('To', '=', "KSEA Seattle Tacoma, United States")
 query.add_filter('Alt', '>', 50)
 #query.add_filter('Alt', '<', 2500)
-print("query assembled")
+logger.info("query assembled")
 
 flights = {}
 
-print("fetching query")
+logger.info("fetching query")
 query_iter = query.fetch()
-print("query fetched")
+logger.info("query fetched")
 for entity in query_iter:
     flight_lat = entity['Lat']
     flight_long = entity['Long']
@@ -42,15 +46,17 @@ for entity in query_iter:
     #else:
         #str(entity['Alt'])
     #folium.Marker([flight_lat, flight_long], popup=label).add_to(m)
-print("finished iterating")
+logger.info("finished iterating")
 select_flight = []
+flight_iter = iter(flights.values())
 while len(select_flight) <= 2:
-    select_flight = next(iter(flights.values()))
+    select_flight = next(flight_iter)
 select_flight.sort(key=lambda x: x[2])
 print(select_flight)
 #for v,w in zip(select_flight, select_flight[1:]):
    # print([v, w])
 
+logger.info("plotting tracts from line list")
 plot_tracts.plot_tracts_from_line_list(select_flight)
 
 #m.save("index.html")
