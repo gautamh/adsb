@@ -37,7 +37,9 @@ for entity in query_iter:
     flight_long = entity['Long']
     time = entity['PosTime']
     if 'Call' in entity:
-        if entity['Call'] in flights and not (flights[entity['Call']][-1][0] == flight_lat and flights[entity['Call']][-1][1] == flight_long):
+        if entity['Call'] in flights:
+            if flights[entity['Call']][-1][0] == flight_lat and flights[entity['Call']][-1][1] == flight_long:
+                continue
             flights[entity['Call']].append((flight_lat, flight_long, time, entity['Call']))
         else:
             flights[entity['Call']] = [(flight_lat, flight_long, time, entity['Call'])]
@@ -49,7 +51,7 @@ for entity in query_iter:
 logger.info("finished iterating")
 select_flight = []
 flight_iter = iter(flights.values())
-while len(select_flight) <= 2:
+while len(select_flight) <= 5:
     select_flight = next(flight_iter)
 select_flight.sort(key=lambda x: x[2])
 print(select_flight)
