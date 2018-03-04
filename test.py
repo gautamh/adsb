@@ -7,7 +7,7 @@ airport_lat = 47.449474
 airport_long = -122.309912
 
 # Radius from airport (in mi?) to track flights
-radius_from_airport = 15
+radius_from_airport = 20
 
 url = "https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json?lat={}&lng={}&fDstL=0&fDstU={}".format(airport_lat, airport_long, radius_from_airport)
 req = urllib.request.Request(
@@ -19,7 +19,7 @@ req = urllib.request.Request(
 )
 
 samples = 30
-delay = 30
+delay = 45
 
 # Instantiates a client
 datastore_client = datastore.Client()
