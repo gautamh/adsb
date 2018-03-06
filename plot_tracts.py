@@ -43,8 +43,10 @@ def get_triangle_tract_intersection(tracts, studyareas):
 
 def get_intersect_left_right_values(tracts, studyareas, value_key):
     logger.debug("get_intersect_left_right_values")
-    left_value_sum = np.sum(intersect_tracts[intersect_tracts.geometry.intersects(studyareas[::2])][value_key])
-    right_value_sum = np.sum(intersect_tracts[intersect_tracts.geometry.intersects(studyareas[1::2])][value_key])
+    intersecting_tracts_left = get_triangle_tract_intersection(tracts, studyareas[::2])
+    intersecting_tracts_right = get_triangle_tract_intersection(tracts, studyareas[1::2])
+    left_value_sum = np.sum(intersecting_tracts_left[value_key])
+    right_value_sum = np.sum(intersecting_tracts_right[value_key])
     return(left_value_sum, right_value_sum)
 
 
