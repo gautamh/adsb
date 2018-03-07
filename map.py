@@ -73,7 +73,9 @@ for p1,p2 in zip(select_flight, select_flight[1:]):
 tracts = plot_tracts.load_tracts()
 intersect_tracts = plot_tracts.get_triangle_tract_intersection(tracts, studyareas)
 left_pop, right_pop = plot_tracts.get_intersect_left_right_values(tracts, studyareas, 'DP0010001')
-plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas)
+ax1 = plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[::2])
+plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red', ax1)
+plt.show()
 print("Left pop: {}".format(left_pop))
 print("Right pop: {}".format(right_pop))
 

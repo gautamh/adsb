@@ -50,13 +50,15 @@ def get_intersect_left_right_values(tracts, studyareas, value_key):
     return(left_value_sum, right_value_sum)
 
 
-def plot_tracts_and_triangles(tracts, studyareas):
+def plot_tracts_and_triangles(tracts, studyareas, color='green', ax=None):
     logger.debug("plot_tracts_and_triangles")
-    tractplot = tracts.plot(column='popdensity')
     polys1 = gpd.GeoSeries(studyareas)
     df1 = gpd.GeoDataFrame({'geometry': polys1, 'df1':[0] * len(studyareas)})
-    df1.plot(ax=tractplot, color='green', alpha=0.5)
-    plt.show()
+    if (ax is None):
+        tractplot = tracts.plot(column='popdensity')
+        return df1.plot(ax=tractplot, color=color, alpha=0.5)
+    else:
+        return df1.plot(ax=ax, color=color, alpha=0.5)
 
 
 def plot_tracts_from_line_list(line_list):
