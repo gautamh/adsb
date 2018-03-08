@@ -17,15 +17,21 @@ import plot_tracts
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
 
+ALT_LOWER_BOUND = 50
+ALT_UPPER_BOUND = 2500
+DEST = 'KSEA Seattle Tacoma, United States'
+EARLIEST_TIME = 1520397257490
+MIN_PATH_LENGTH = 4
+
 # Instantiates a client
 datastore_client = datastore.Client()
 
 #m = folium.Map(location=[47.449474, -122.309912])
 
 query = datastore_client.query(kind='FlightPoint')
-#query.add_filter('To', '=', "KSEA Seattle Tacoma, United States")
-query.add_filter('Alt', '>', 50)
-#query.add_filter('Alt', '<', 2500)
+#query.add_filter('To', '=', DEST)
+query.add_filter('Alt', '>', ALT_LOWER_BOUND)
+#query.add_filter('Alt', '<', ALT_UPPER_BOUND)
 logger.info("query assembled")
 
 flights = {}
@@ -37,7 +43,7 @@ for entity in query_iter:
     flight_lat = entity['Lat']
     flight_long = entity['Long']
     time = entity['PosTime']
-    if 'Call' in entity and 'To' in entity and entity['To'] == 'KSEA Seattle Tacoma, United States' and int(entity['PosTime']) > 1520097257490 :
+    if 'Call' in entity and 'To' in entity and entity['To'] == DEST and int(entity['PosTime']) > EARLIEST_TIME:
         if entity['Call'] in flights:
             if (flight_lat, flight_long) in [(x[0], x[1]) for x in flights[entity['Call']]]:
                 continue
@@ -53,7 +59,7 @@ for entity in query_iter:
 logger.info("finished iterating")
 select_flight = []
 flight_iter = iter(flights.values())
-while len(select_flight) <= 4:
+while len(select_flight) <= MIN_PATH_LENGTH:
     select_flight = next(flight_iter)
 select_flight.sort(key=lambda x: x[2])
 print(select_flight)
