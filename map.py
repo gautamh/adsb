@@ -51,10 +51,6 @@ for entity in query_iter:
             flights[entity['Call']].sort(key=lambda x: x[2])
         else:
             flights[entity['Call']] = [(flight_lat, flight_long, time, entity['Call'])]
-        #label = entity['Call'] + " " + str(entity['Alt'])
-    #else:
-        #str(entity['Alt'])
-    #folium.Marker([flight_lat, flight_long], popup=label).add_to(m)
 
 logger.info("finished iterating")
 logger.info("Number of flights >= MIN_PATH_LENGTH: {}".format(
@@ -80,12 +76,6 @@ while len(select_flight) <= MIN_PATH_LENGTH:
 select_flight.sort(key=lambda x: x[2])
 print(select_flight)
 
-#studyareas = []
-#for v,w in zip(select_flight, select_flight[1:]):
-#    left_right = generate_viewing_triangles(p1[1], p1[0], p2[1], p2[0], 0.1)
-#    studyareas.extend(left_right)
-#leftpop, rightpop = get_intersect_left_right_values()
-
 logger.info("plotting tracts from line list")
 studyareas = []
 for p1,p2 in zip(select_flight, select_flight[1:]):
@@ -100,6 +90,3 @@ plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red',
 plt.show()
 print("Left pop: {}".format(left_pop))
 print("Right pop: {}".format(right_pop))
-
-#m.save("index.html")
-#print(flights)
