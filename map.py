@@ -21,7 +21,7 @@ ALT_LOWER_BOUND = 50
 ALT_UPPER_BOUND = 2500
 DEST = 'KSEA Seattle Tacoma, United States'
 EARLIEST_TIME = 1520397257490
-MIN_PATH_LENGTH = 4
+MIN_PATH_LENGTH = 5
 
 # Instantiates a client
 datastore_client = datastore.Client()
@@ -57,10 +57,26 @@ for entity in query_iter:
     #folium.Marker([flight_lat, flight_long], popup=label).add_to(m)
 
 logger.info("finished iterating")
+logger.info("Number of flights >= MIN_PATH_LENGTH: {}".format(
+    len([x for x in flights.values() if len(x) >= MIN_PATH_LENGTH])))
+
+# Find a flight path longer than MIN_PATH_LENGTH
 select_flight = []
 flight_iter = iter(flights.values())
 while len(select_flight) <= MIN_PATH_LENGTH:
     select_flight = next(flight_iter)
+    if len(select_flight) < 2:
+        continue
+    for i in range(1, len(select_flight)):
+        # Break up paths that are multiple flights under the same number
+        t1 = select_flight[i - 1][2]
+        t2 = select_flight[i][2]
+        if (t2 - t1 > 2000000):
+            select_flight = select_flight[:i]
+            if len(select_flight) <= MIN_PATH_LENGTH:
+                select_flight = select_flight[i:]
+            else:
+                break
 select_flight.sort(key=lambda x: x[2])
 print(select_flight)
 
