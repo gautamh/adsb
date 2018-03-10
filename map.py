@@ -20,13 +20,13 @@ logging.basicConfig(level=logging.INFO)
 ALT_LOWER_BOUND = 50
 ALT_UPPER_BOUND = 2500
 DEST = 'KSEA Seattle Tacoma, United States'
-EARLIEST_TIME = 1520397257490
+EARLIEST_TIME = 1520607257490#1520397257490
 MIN_PATH_LENGTH = 5
 
 # Instantiates a client
 datastore_client = datastore.Client()
 
-#m = folium.Map(location=[47.449474, -122.309912])
+m = folium.Map(location=[47.449474, -122.309912])
 
 query = datastore_client.query(kind='FlightPoint')
 #query.add_filter('To', '=', DEST)
@@ -84,9 +84,14 @@ for p1,p2 in zip(select_flight, select_flight[1:]):
     studyareas.extend(left_right)
 tracts = plot_tracts.load_tracts()
 intersect_tracts = plot_tracts.get_triangle_tract_intersection(tracts, studyareas)
+#print(intersect_tracts)
 left_pop, right_pop = plot_tracts.get_intersect_left_right_values(tracts, studyareas, 'DP0010001')
 ax1 = plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[::2])
 plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red', ax1)
 plt.show()
 print("Left pop: {}".format(left_pop))
 print("Right pop: {}".format(right_pop))
+
+m.choropleth(geo_data=intersect_tracts.to_json(), data=intersect_tracts, columns = ['GEOID10', 'DP0010001'], key_on = 'feature.properties.{}'.format('GEOID10'), fill_color = 'YlOrRd', fill_opacity = 0.6, line_opacity = 0.2)
+
+m.save("index.html")
