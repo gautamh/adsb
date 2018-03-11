@@ -93,6 +93,7 @@ plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red',
 
 m.choropleth(geo_data=intersect_tracts.to_json(), data=intersect_tracts_right, columns = ['GEOID10', 'DP0010001'], key_on = 'feature.properties.{}'.format('GEOID10'), fill_color = 'BuPu', fill_opacity = 0.6, line_opacity = 0.2)
 m.choropleth(geo_data=intersect_tracts.to_json(), data=intersect_tracts_left, columns = ['GEOID10', 'DP0010001'], key_on = 'feature.properties.{}'.format('GEOID10'), fill_color = 'YlOrRd', fill_opacity = 0.6, line_opacity = 0.2)
+folium.LayerControl().add_to(m)
 m.save("index.html")
 
 plt.show()
