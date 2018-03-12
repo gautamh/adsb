@@ -1,6 +1,15 @@
-import urllib.request, json 
+import json 
+import logging
+import os
 import time
+import urllib.request
+
 from google.cloud import datastore
+
+# Set up logger
+logger = logging.getLogger()
+logging.basicConfig(level=logging.INFO,
+                    filename=os.path.expanduser('~/adsb_logs/{}_adsb_log'.format(str(round(time.time())))))
 
 # Instantiates a client
 datastore_client = datastore.Client()
@@ -47,7 +56,8 @@ def sample_flight_points(num_samples, delay, radius, lat, long, client):
             flight_point = datastore.Entity(key=flight_point_key)
             for k,v in flight.items():
                 flight_point[k] = v
-        
+            
+            logger.info(flight_point)
             client.put(flight_point)
 
         time.sleep(delay)
