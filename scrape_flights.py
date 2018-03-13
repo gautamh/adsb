@@ -21,8 +21,13 @@ KIND = 'FlightPoint'
 KSEA_lat = 47.449474
 KSEA_long = -122.309912
 
+airport_coords = [
+    (KSEA_lat, KSEA_long)
+]
+
+
 # Radius from airport (in mi?) to track flights
-radius_from_KSEA = 20
+radius_from_airport = 20
 
 samples = 30
 delay = 45
@@ -62,4 +67,5 @@ def sample_flight_points(num_samples, delay, radius, lat, long, client):
 
         time.sleep(delay)
 
-sample_flight_points(samples, delay, radius_from_KSEA, KSEA_lat, KSEA_long, datastore_client)
+for airport_lat, airport_long in airport_coords:
+    sample_flight_points(samples, delay, radius_from_airport, airport_lat, airport_long, datastore_client)
