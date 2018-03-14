@@ -4,6 +4,7 @@ import os
 import pdb
 import sys
 
+from branca.colormap import linear
 import folium
 import geopandas as gpd
 from google.cloud import datastore
@@ -86,29 +87,51 @@ tracts = plot_tracts.load_tracts()
 intersect_tracts = plot_tracts.get_triangle_tract_intersection(tracts, studyareas)
 intersect_tracts_left = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[::2])
 intersect_tracts_right = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[1::2])
-#print(intersect_tracts)
+
 left_pop, right_pop = plot_tracts.get_intersect_left_right_values(tracts, studyareas, 'DP0010001')
 ax1 = plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[::2])
 plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red', ax1)
 
-m.choropleth(geo_data=intersect_tracts.to_json(),
-             data=intersect_tracts_right,
-             columns = ['GEOID10', 'DP0010001'],
-             key_on = 'feature.properties.{}'.format('GEOID10'),
-             fill_color = 'BuPu',
-             fill_opacity = 0.6,
-             line_opacity = 0.2,
-             name='Right View',
-             legend_name='Right View')
-m.choropleth(geo_data=intersect_tracts.to_json(),
-             data=intersect_tracts_left,
-             columns = ['GEOID10', 'DP0010001'],
-             key_on = 'feature.properties.{}'.format('GEOID10'),
-             fill_color = 'YlOrRd',
-             fill_opacity = 0.6,
-             line_opacity = 0.2,
-             name='Left View',
-             legend_name='Left View')
+colormap1 = linear.YlGn.scale(
+    intersect_tracts_left['DP0010001'].min(),
+    intersect_tracts_left['DP0010001'].max())
+colormap1.caption = 'Left View'
+colormap1.add_to(m)
+
+
+colormap2 = linear.BuPu.scale(
+    intersect_tracts_right['DP0010001'].min(),
+    intersect_tracts_right['DP0010001'].max())
+colormap2.caption = 'Right View'
+colormap2.add_to(m)
+
+def style_function(feature):
+    return {
+        'fillColor': colormap1(feature['properties']['DP0010001']),
+        'color': 'black',
+    }
+
+folium.GeoJson(
+    intersect_tracts_left,
+    name='Left View',
+    style_function=lambda feature: {
+        'fillColor': colormap1(feature['properties']['DP0010001']),
+        'color': 'black',
+        'fillOpacity': 0.7,
+        'weight': 1
+    }
+).add_to(m)
+
+folium.GeoJson(
+    intersect_tracts_right,
+    name='Right View',
+    style_function=lambda feature: {
+        'fillColor': colormap2(feature['properties']['DP0010001']),
+        'color': 'black',
+        'fillOpacity': 0.7,
+        'weight': 1
+    }
+).add_to(m)
 folium.LayerControl().add_to(m)
 m.save("index.html")
 
