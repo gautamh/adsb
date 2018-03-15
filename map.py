@@ -132,6 +132,9 @@ folium.GeoJson(
         'weight': 1
     }
 ).add_to(m)
+
+folium.PolyLine([(x[0], x[1]) for x in select_flight]).add_to(m)
+
 folium.LayerControl().add_to(m)
 m.save("index.html")
 
