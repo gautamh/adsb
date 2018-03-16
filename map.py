@@ -69,10 +69,11 @@ while len(select_flight) <= MIN_PATH_LENGTH:
         t1 = select_flight[i - 1][2]
         t2 = select_flight[i][2]
         if (t2 - t1 > 2000000):
-            select_flight = select_flight[:i]
-            if len(select_flight) <= MIN_PATH_LENGTH:
+            new_select_flight = select_flight[:i]
+            if len(new_select_flight) <= MIN_PATH_LENGTH:
                 select_flight = select_flight[i:]
             else:
+                select_flight = new_select_flight
                 break
 select_flight.sort(key=lambda x: x[2])
 print(select_flight)
