@@ -94,29 +94,23 @@ ax1 = plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[::2])
 plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red', ax1)
 
 colormap1 = linear.YlGn.scale(
-    intersect_tracts_left['DP0010001'].min(),
-    intersect_tracts_left['DP0010001'].max())
+    intersect_tracts_left['popdensity'].min(),
+    intersect_tracts_left['popdensity'].max())
 colormap1.caption = 'Left View'
 colormap1.add_to(m)
 
 
 colormap2 = linear.BuPu.scale(
-    intersect_tracts_right['DP0010001'].min(),
-    intersect_tracts_right['DP0010001'].max())
+    intersect_tracts_right['popdensity'].min(),
+    intersect_tracts_right['popdensity'].max())
 colormap2.caption = 'Right View'
 colormap2.add_to(m)
-
-def style_function(feature):
-    return {
-        'fillColor': colormap1(feature['properties']['DP0010001']),
-        'color': 'black',
-    }
 
 folium.GeoJson(
     intersect_tracts_left,
     name='Left View',
     style_function=lambda feature: {
-        'fillColor': colormap1(feature['properties']['DP0010001']),
+        'fillColor': colormap1(feature['properties']['popdensity']),
         'color': 'black',
         'fillOpacity': 0.7,
         'weight': 1
@@ -127,7 +121,7 @@ folium.GeoJson(
     intersect_tracts_right,
     name='Right View',
     style_function=lambda feature: {
-        'fillColor': colormap2(feature['properties']['DP0010001']),
+        'fillColor': colormap2(feature['properties']['popdensity']),
         'color': 'black',
         'fillOpacity': 0.7,
         'weight': 1

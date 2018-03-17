@@ -29,6 +29,7 @@ def load_tracts():
     logger.debug("load_tracts")
     tracts = gpd.GeoDataFrame.from_file("/mnt/c/Users/Gautam/Downloads/Profile-County_Tract/Profile-County_Tract.gdb", layer='Tract_2010Census_DP1')
     tracts['popdensity'] = tracts['DP0010001']/tracts['ALAND10']
+    tracts['popdensity'].fillna(0, inplace=True)
     return tracts
 
 
