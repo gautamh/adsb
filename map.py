@@ -150,7 +150,7 @@ folium.GeoJson(
     style_function=lambda feature: {
         'fillColor': colormap1(feature['properties']['popdensity'] * feature['properties']['left_view']),
         'color': 'black',
-        'fillOpacity': 0.7,
+        'fillOpacity': (feature['properties']['popdensity'] * feature['properties']['left_view'])/left_view_density.max(),
         'weight': 1
     }
 ).add_to(m)
@@ -161,7 +161,7 @@ folium.GeoJson(
     style_function=lambda feature: {
         'fillColor': colormap2(feature['properties']['popdensity'] * feature['properties']['right_view']),
         'color': 'black',
-        'fillOpacity': 0.7,
+        'fillOpacity': (feature['properties']['popdensity'] * feature['properties']['right_view'])/right_view_density.max(),
         'weight': 1
     }
 ).add_to(m)
