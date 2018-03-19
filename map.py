@@ -20,14 +20,20 @@ logging.basicConfig(level=logging.INFO)
 
 ALT_LOWER_BOUND = 50
 ALT_UPPER_BOUND = 2500
-DEST = 'KSEA Seattle Tacoma, United States'
+#DEST = 'KSEA Seattle Tacoma, United States'
+DEST= 'KDCA Ronald Reagan Washington National, United States'
+DEST_LAT = 38.85120
+DEST_LONG = -77.03774
+#DEST_LAT = 47.449474
+#DEST_LONG = -122.309912
 EARLIEST_TIME = 1520607257490#1520397257490
 MIN_PATH_LENGTH = 5
 
 # Instantiates a client
 datastore_client = datastore.Client()
 
-m = folium.Map(location=[47.449474, -122.309912])
+#m = folium.Map(location=[DEST_LAT, DEST_LONG])
+m = folium.Map(location=[DEST_LAT, DEST_LONG])
 
 query = datastore_client.query(kind='FlightPoint')
 #query.add_filter('To', '=', DEST)
@@ -57,11 +63,14 @@ logger.info("finished iterating")
 logger.info("Number of flights >= MIN_PATH_LENGTH: {}".format(
     len([x for x in flights.values() if len(x) >= MIN_PATH_LENGTH])))
 
-# Find a flight path longer than MIN_PATH_LENGTH
+# Find flights with path longer than MIN_PATH_LENGTH
+valid_flights = []
+
 select_flight = []
 flight_iter = iter(flights.values())
-while len(select_flight) <= MIN_PATH_LENGTH:
-    select_flight = next(flight_iter)
+for select_flight in flight_iter:
+#while len(select_flight) <= MIN_PATH_LENGTH:
+    #select_flight = next(flight_iter)
     if len(select_flight) < 2:
         continue
     for i in range(1, len(select_flight)):
@@ -74,40 +83,68 @@ while len(select_flight) <= MIN_PATH_LENGTH:
                 select_flight = select_flight[i:]
             else:
                 select_flight = new_select_flight
-                break
-select_flight.sort(key=lambda x: x[2])
-print(select_flight)
+            break
+    if len(select_flight) >= MIN_PATH_LENGTH:
+        select_flight.sort(key=lambda x: x[2])
+        valid_flights.append(select_flight)
 
-logger.info("plotting tracts from line list")
-studyareas = []
-for p1,p2 in zip(select_flight, select_flight[1:]):
-    print([p1, p2])
-    left_right = plot_tracts.generate_viewing_triangles(p1[1], p1[0], p2[1], p2[0], 0.1)
-    studyareas.extend(left_right)
+#print(select_flight)
+
+#logger.info("plotting tracts from line list")
+
+logger.info("loading tracts")
 tracts = plot_tracts.load_tracts()
-intersect_tracts = plot_tracts.get_triangle_tract_intersection(tracts, studyareas)
-intersect_tracts_left = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[::2])
-intersect_tracts_right = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[1::2])
+tracts = tracts[(~(tracts.INTPTLAT10.astype('float') > (DEST_LAT + 0.5))) & (~(tracts.INTPTLAT10.astype('float') < (DEST_LAT - 0.5))) & (~(tracts.INTPTLON10.astype('float') > (DEST_LONG + 1))) & (~(tracts.INTPTLON10.astype('float') < (DEST_LONG - 1)))]
 
-left_pop, right_pop = plot_tracts.get_intersect_left_right_values(tracts, studyareas, 'DP0010001')
-ax1 = plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[::2])
-plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red', ax1)
+tracts['left_view'] = 0
+tracts['right_view'] = 0
 
+left_tracts = gpd.GeoDataFrame(columns=tracts.columns, crs={'init': 'epsg:4326'})
+right_tracts = gpd.GeoDataFrame(columns=tracts.columns, crs={'init': 'epsg:4326'})
+
+logger.info("iterating over valid flights")
+for valid_flight in valid_flights:
+    studyareas = []
+    for p1,p2 in zip(valid_flight, valid_flight[1:]):
+        print([p1, p2])
+        left_right = plot_tracts.generate_viewing_triangles(p1[1], p1[0], p2[1], p2[0], 0.1)
+        studyareas.extend(left_right)
+    intersect_tracts = plot_tracts.get_triangle_tract_intersection(tracts, studyareas)
+    intersect_tracts_left = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[::2])
+    intersect_tracts_right = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[1::2])
+    for index, left_tract in intersect_tracts_left.iterrows():
+        if left_tract['GEOID10'] in left_tracts['GEOID10'].values:
+            select_tract = left_tracts.loc[left_tracts['GEOID10'] == left_tract['GEOID10']]
+            select_tract['left_view'] += 1
+        else:
+            left_tract['left_view'] = 1
+            left_tracts = left_tracts.append(left_tract)
+    for index, right_tract in intersect_tracts_right.iterrows():
+        if right_tract['GEOID10'] in right_tracts['GEOID10'].values:
+            select_tract = right_tracts.loc[right_tracts['GEOID10'] == right_tract['GEOID10']]
+            select_tract['right_view'] += 1
+        else:
+            right_tract['right_view'] = 1
+            right_tracts = right_tracts.append(right_tract)
+
+    #left_pop, right_pop = plot_tracts.get_intersect_left_right_values(tracts, studyareas, 'DP0010001')
+#ax1 = plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[::2])
+#plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red', ax1)
 colormap1 = linear.YlGn.scale(
-    intersect_tracts_left['popdensity'].min(),
-    intersect_tracts_left['popdensity'].max())
+    left_tracts['popdensity'].min(),
+    left_tracts['popdensity'].max())
 colormap1.caption = 'Left View'
 colormap1.add_to(m)
 
 
 colormap2 = linear.BuPu.scale(
-    intersect_tracts_right['popdensity'].min(),
-    intersect_tracts_right['popdensity'].max())
+    right_tracts['popdensity'].min(),
+    right_tracts['popdensity'].max())
 colormap2.caption = 'Right View'
 colormap2.add_to(m)
 
 folium.GeoJson(
-    intersect_tracts_left,
+    left_tracts,
     name='Left View',
     style_function=lambda feature: {
         'fillColor': colormap1(feature['properties']['popdensity']),
@@ -118,7 +155,7 @@ folium.GeoJson(
 ).add_to(m)
 
 folium.GeoJson(
-    intersect_tracts_right,
+    right_tracts,
     name='Right View',
     style_function=lambda feature: {
         'fillColor': colormap2(feature['properties']['popdensity']),
@@ -128,11 +165,13 @@ folium.GeoJson(
     }
 ).add_to(m)
 
-folium.PolyLine([(x[0], x[1]) for x in select_flight]).add_to(m)
+for valid_flight in valid_flights:
+    folium.PolyLine([(x[0], x[1]) for x in valid_flight]).add_to(m)
 
 folium.LayerControl().add_to(m)
 m.save("index.html")
 
-plt.show()
-print("Left pop: {}".format(left_pop))
-print("Right pop: {}".format(right_pop))
+logger.info("done")
+#plt.show()
+#print("Left pop: {}".format(left_pop))
+#print("Right pop: {}".format(right_pop))
