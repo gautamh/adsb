@@ -20,19 +20,18 @@ logging.basicConfig(level=logging.INFO)
 
 ALT_LOWER_BOUND = 50
 ALT_UPPER_BOUND = 2500
-#DEST = 'KSEA Seattle Tacoma, United States'
-DEST= 'KDCA Ronald Reagan Washington National, United States'
-DEST_LAT = 38.85120
-DEST_LONG = -77.03774
-#DEST_LAT = 47.449474
-#DEST_LONG = -122.309912
+DEST = 'KSEA Seattle Tacoma, United States'
+#DEST= 'KDCA Ronald Reagan Washington National, United States'
+#DEST_LAT = 38.85120
+#DEST_LONG = -77.03774
+DEST_LAT = 47.449474
+DEST_LONG = -122.309912
 EARLIEST_TIME = 1520607257490#1520397257490
 MIN_PATH_LENGTH = 5
 
 # Instantiates a client
 datastore_client = datastore.Client()
 
-#m = folium.Map(location=[DEST_LAT, DEST_LONG])
 m = folium.Map(location=[DEST_LAT, DEST_LONG])
 
 query = datastore_client.query(kind='FlightPoint')
@@ -114,15 +113,16 @@ for valid_flight in valid_flights:
     intersect_tracts_right = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[1::2])
     for index, left_tract in intersect_tracts_left.iterrows():
         if left_tract['GEOID10'] in left_tracts['GEOID10'].values:
-            select_tract = left_tracts.loc[left_tracts['GEOID10'] == left_tract['GEOID10']]
-            select_tract['left_view'] += 1
+            #pdb.set_trace()
+            left_tracts.loc[left_tracts['GEOID10'] == left_tract['GEOID10'],'left_view'] += 1
+            #select_tract['left_view'] += 1
         else:
             left_tract['left_view'] = 1
             left_tracts = left_tracts.append(left_tract)
     for index, right_tract in intersect_tracts_right.iterrows():
         if right_tract['GEOID10'] in right_tracts['GEOID10'].values:
-            select_tract = right_tracts.loc[right_tracts['GEOID10'] == right_tract['GEOID10']]
-            select_tract['right_view'] += 1
+            right_tracts.loc[right_tracts['GEOID10'] == right_tract['GEOID10'],'right_view'] += 1
+            #select_tract['right_view'] += 1
         else:
             right_tract['right_view'] = 1
             right_tracts = right_tracts.append(right_tract)
@@ -130,16 +130,17 @@ for valid_flight in valid_flights:
     #left_pop, right_pop = plot_tracts.get_intersect_left_right_values(tracts, studyareas, 'DP0010001')
 #ax1 = plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[::2])
 #plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red', ax1)
+left_view_density = left_tracts['popdensity'] * left_tracts['left_view']
 colormap1 = linear.YlGn.scale(
-    left_tracts['popdensity'].min(),
-    left_tracts['popdensity'].max())
+    left_view_density.min(),
+    left_view_density.max())
 colormap1.caption = 'Left View'
 colormap1.add_to(m)
 
-
+right_view_density = right_tracts['popdensity'] * right_tracts['right_view']
 colormap2 = linear.BuPu.scale(
-    right_tracts['popdensity'].min(),
-    right_tracts['popdensity'].max())
+    right_view_density.min(),
+    right_view_density.max())
 colormap2.caption = 'Right View'
 colormap2.add_to(m)
 
@@ -147,7 +148,7 @@ folium.GeoJson(
     left_tracts,
     name='Left View',
     style_function=lambda feature: {
-        'fillColor': colormap1(feature['properties']['popdensity']),
+        'fillColor': colormap1(feature['properties']['popdensity'] * feature['properties']['left_view']),
         'color': 'black',
         'fillOpacity': 0.7,
         'weight': 1
@@ -158,7 +159,7 @@ folium.GeoJson(
     right_tracts,
     name='Right View',
     style_function=lambda feature: {
-        'fillColor': colormap2(feature['properties']['popdensity']),
+        'fillColor': colormap2(feature['properties']['popdensity'] * feature['properties']['right_view']),
         'color': 'black',
         'fillOpacity': 0.7,
         'weight': 1
