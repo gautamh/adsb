@@ -113,23 +113,17 @@ for valid_flight in valid_flights:
     intersect_tracts_right = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[1::2])
     for index, left_tract in intersect_tracts_left.iterrows():
         if left_tract['GEOID10'] in left_tracts['GEOID10'].values:
-            #pdb.set_trace()
             left_tracts.loc[left_tracts['GEOID10'] == left_tract['GEOID10'],'left_view'] += 1 # https://www.dataquest.io/blog/settingwithcopywarning/
-            #select_tract['left_view'] += 1
         else:
             left_tract['left_view'] = 1
             left_tracts = left_tracts.append(left_tract)
     for index, right_tract in intersect_tracts_right.iterrows():
         if right_tract['GEOID10'] in right_tracts['GEOID10'].values:
             right_tracts.loc[right_tracts['GEOID10'] == right_tract['GEOID10'],'right_view'] += 1 # https://www.dataquest.io/blog/settingwithcopywarning/
-            #select_tract['right_view'] += 1
         else:
             right_tract['right_view'] = 1
             right_tracts = right_tracts.append(right_tract)
 
-    #left_pop, right_pop = plot_tracts.get_intersect_left_right_values(tracts, studyareas, 'DP0010001')
-#ax1 = plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[::2])
-#plot_tracts.plot_tracts_and_triangles(intersect_tracts, studyareas[1::2], 'red', ax1)
 left_view_density = left_tracts['popdensity'] * left_tracts['left_view']
 colormap1 = linear.YlGn.scale(
     left_view_density.min(),
@@ -176,6 +170,3 @@ print("Left popdensity*views: {}".format(((left_tracts['popdensity'] ** 2) * lef
 print("Right popdensity*views: {}".format(((right_tracts['popdensity'] ** 2) * right_tracts['right_view']).sum()))
 
 logger.info("done")
-#plt.show()
-#print("Left pop: {}".format(left_pop))
-#print("Right pop: {}".format(right_pop))
