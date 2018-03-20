@@ -114,14 +114,14 @@ for valid_flight in valid_flights:
     for index, left_tract in intersect_tracts_left.iterrows():
         if left_tract['GEOID10'] in left_tracts['GEOID10'].values:
             #pdb.set_trace()
-            left_tracts.loc[left_tracts['GEOID10'] == left_tract['GEOID10'],'left_view'] += 1
+            left_tracts.loc[left_tracts['GEOID10'] == left_tract['GEOID10'],'left_view'] += 1 # https://www.dataquest.io/blog/settingwithcopywarning/
             #select_tract['left_view'] += 1
         else:
             left_tract['left_view'] = 1
             left_tracts = left_tracts.append(left_tract)
     for index, right_tract in intersect_tracts_right.iterrows():
         if right_tract['GEOID10'] in right_tracts['GEOID10'].values:
-            right_tracts.loc[right_tracts['GEOID10'] == right_tract['GEOID10'],'right_view'] += 1
+            right_tracts.loc[right_tracts['GEOID10'] == right_tract['GEOID10'],'right_view'] += 1 # https://www.dataquest.io/blog/settingwithcopywarning/
             #select_tract['right_view'] += 1
         else:
             right_tract['right_view'] = 1
@@ -171,6 +171,9 @@ for valid_flight in valid_flights:
 
 folium.LayerControl().add_to(m)
 m.save("index.html")
+
+print("Left popdensity*views: {}".format(left_view_density.sum()))
+print("Right popdensity*views: {}".format(right_view_density.sum()))
 
 logger.info("done")
 #plt.show()
