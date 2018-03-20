@@ -172,8 +172,8 @@ for valid_flight in valid_flights:
 folium.LayerControl().add_to(m)
 m.save("index.html")
 
-print("Left popdensity*views: {}".format(left_view_density.sum()))
-print("Right popdensity*views: {}".format(right_view_density.sum()))
+print("Left popdensity*views: {}".format(((left_tracts['popdensity'] ** 2) * left_tracts['left_view']).sum()))
+print("Right popdensity*views: {}".format(((right_tracts['popdensity'] ** 2) * right_tracts['right_view']).sum()))
 
 logger.info("done")
 #plt.show()
