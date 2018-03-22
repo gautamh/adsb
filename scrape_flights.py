@@ -45,7 +45,7 @@ VALID_TO = [
 ]
 
 def should_record_flight(flightinfo, valid_to=None):
-    if (valid_to is not None and 'To' in flightinfo and flightinfo['To'] not in valid_to):
+    if (valid_to is not None and ('To' not in flightinfo or flightinfo['To'] not in valid_to)):
         return False
 
     return True
