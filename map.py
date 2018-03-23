@@ -20,13 +20,13 @@ logging.basicConfig(level=logging.INFO)
 
 ALT_LOWER_BOUND = 50
 ALT_UPPER_BOUND = 2500
-DEST = 'KSEA Seattle Tacoma, United States'
-#DEST= 'KDCA Ronald Reagan Washington National, United States'
-#DEST_LAT = 38.85120
-#DEST_LONG = -77.03774
-DEST_LAT = 47.449474
-DEST_LONG = -122.309912
-EARLIEST_TIME = 1520607257490#1520397257490
+#DEST = 'KSEA Seattle Tacoma, United States'
+DEST= 'KDCA Ronald Reagan Washington National, United States'
+DEST_LAT = 38.85120
+DEST_LONG = -77.03774
+#DEST_LAT = 47.449474
+#DEST_LONG = -122.309912
+EARLIEST_TIME = 1520607257490
 MIN_PATH_LENGTH = 5
 
 # Instantiates a client
@@ -68,8 +68,6 @@ valid_flights = []
 select_flight = []
 flight_iter = iter(flights.values())
 for select_flight in flight_iter:
-#while len(select_flight) <= MIN_PATH_LENGTH:
-    #select_flight = next(flight_iter)
     if len(select_flight) < 2:
         continue
     for i in range(1, len(select_flight)):
@@ -86,10 +84,6 @@ for select_flight in flight_iter:
     if len(select_flight) >= MIN_PATH_LENGTH:
         select_flight.sort(key=lambda x: x[2])
         valid_flights.append(select_flight)
-
-#print(select_flight)
-
-#logger.info("plotting tracts from line list")
 
 logger.info("loading tracts")
 tracts = plot_tracts.load_tracts()
