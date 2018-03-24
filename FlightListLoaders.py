@@ -13,7 +13,7 @@ class FlightListLoader:
     Each flight path is a list of tuples (lat, long, time).
     '''
     @abstractmethod
-    def load_flight_path_list(self): raise NotImplementedError
+    def load_flight_path_list(self, constraints): raise NotImplementedError
 
 class DatastoreListLoader(FlightListLoader):
     def __init__(selfs):
@@ -22,9 +22,9 @@ class DatastoreListLoader(FlightListLoader):
 
         self.datastore_client = datastore.Client()
 
-    def load_flight_path_list(self):
+    def load_flight_path_list(self, constraints):
         query = datastore_client.query(kind='FlightPoint')
-        query.add_filter('Alt', '>', ALT_LOWER_BOUND)
+        query.add_filter('Alt', '>', constraints['alt_lower_bound'])
         logger.info("query assembled")
 
         flights = {}
@@ -36,7 +36,7 @@ class DatastoreListLoader(FlightListLoader):
             flight_lat = entity['Lat']
             flight_long = entity['Long']
             time = entity['PosTime']
-            if 'Call' in entity and 'To' in entity and entity['To'] == DEST and int(entity['PosTime']) > EARLIEST_TIME:
+            if 'Call' in entity and 'To' in entity and entity['To'] == constraints['dest'] and int(entity['PosTime']) > constraints['earliest_time']:
                 if entity['Call'] in flights:
                     if (flight_lat, flight_long) in [(x[0], x[1]) for x in flights[entity['Call']]]:
                         continue
