@@ -5,6 +5,6 @@ But the view you get on approach into an airport is determined by which side of 
 
 The premise is that population density is a good proxy for the quality of the view which an area provides, so if you can figure out what sort of population density you are seeing out of each side of the plane on approach, you can determine which view is best:
 
-![The views approaching KSEA](https://pbs.twimg.com/media/DXlkJKUVQAIuL0O.jpg)
+![The views approaching KSEA](https://github.com/gautamh/adsb/raw/master/KSEAv1.PNG)
 
 Inspired by: https://twitter.com/rachel_shorey/status/955459459245133824
