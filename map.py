@@ -15,6 +15,8 @@ import shapely
 
 import plot_tracts
 
+from FlightListLoaders import DatastoreListLoader
+
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
 
@@ -34,29 +36,17 @@ datastore_client = datastore.Client()
 
 m = folium.Map(location=[DEST_LAT, DEST_LONG])
 
-query = datastore_client.query(kind='FlightPoint')
-#query.add_filter('To', '=', DEST)
-query.add_filter('Alt', '>', ALT_LOWER_BOUND)
-#query.add_filter('Alt', '<', ALT_UPPER_BOUND)
-logger.info("query assembled")
+constraints = {
+    'alt_lower_bound': ALT_LOWER_BOUND,
+    'alt_upper_bound': ALT_UPPER_BOUND,
+    'dest': DEST,
+    'earliest_time': EARLIEST_TIME
+}
 
 flights = {}
 
-logger.info("fetching query")
-query_iter = query.fetch()
-logger.info("query fetched")
-for entity in query_iter:
-    flight_lat = entity['Lat']
-    flight_long = entity['Long']
-    time = entity['PosTime']
-    if 'Call' in entity and 'To' in entity and entity['To'] == DEST and int(entity['PosTime']) > EARLIEST_TIME:
-        if entity['Call'] in flights:
-            if (flight_lat, flight_long) in [(x[0], x[1]) for x in flights[entity['Call']]]:
-                continue
-            flights[entity['Call']].append((flight_lat, flight_long, time, entity['Call']))
-            flights[entity['Call']].sort(key=lambda x: x[2])
-        else:
-            flights[entity['Call']] = [(flight_lat, flight_long, time, entity['Call'])]
+loader = DatastoreListLoader()
+flights = loader.load_flight_path_list(constraints)
 
 logger.info("finished iterating")
 logger.info("Number of flights >= MIN_PATH_LENGTH: {}".format(
@@ -95,8 +85,13 @@ tracts['right_view'] = 0
 left_tracts = gpd.GeoDataFrame(columns=tracts.columns, crs={'init': 'epsg:4326'})
 right_tracts = gpd.GeoDataFrame(columns=tracts.columns, crs={'init': 'epsg:4326'})
 
+left_study_areas = []
+right_study_areas = []
+
 logger.info("iterating over valid flights")
 for valid_flight in valid_flights:
+    #if valid_flight[0][3] == 'DAL2544':
+        #pdb.set_trace()
     studyareas = []
     for p1,p2 in zip(valid_flight, valid_flight[1:]):
         print([p1, p2])
@@ -105,6 +100,8 @@ for valid_flight in valid_flights:
     intersect_tracts = plot_tracts.get_triangle_tract_intersection(tracts, studyareas)
     intersect_tracts_left = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[::2])
     intersect_tracts_right = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[1::2])
+    left_study_areas.extend(studyareas[::2])
+    right_study_areas.extend(studyareas[1::2])
     for index, left_tract in intersect_tracts_left.iterrows():
         if left_tract['GEOID10'] in left_tracts['GEOID10'].values:
             left_tracts.loc[left_tracts['GEOID10'] == left_tract['GEOID10'],'left_view'] += 1 # https://www.dataquest.io/blog/settingwithcopywarning/
@@ -117,6 +114,8 @@ for valid_flight in valid_flights:
         else:
             right_tract['right_view'] = 1
             right_tracts = right_tracts.append(right_tract)
+    #if valid_flight[0][3] == 'DAL2544':
+        #pdb.set_trace()
 
 left_view_density = left_tracts['popdensity'] * left_tracts['left_view']
 colormap1 = linear.YlGn.scale(
@@ -155,10 +154,16 @@ folium.GeoJson(
 ).add_to(m)
 
 for valid_flight in valid_flights:
+    for point in valid_flight:
+        folium.Marker([point[0], point[1]], popup="{} {}".format(point[3], point[2])).add_to(m)
     folium.PolyLine([(x[0], x[1]) for x in valid_flight]).add_to(m)
 
 folium.LayerControl().add_to(m)
 m.save("index.html")
+
+ax1 = plot_tracts.plot_tracts_and_triangles(left_tracts, left_study_areas)
+plot_tracts.plot_tracts_and_triangles(right_tracts, right_study_areas, 'red', ax1)
+plt.show()
 
 print("Left popdensity*views: {}".format(((left_tracts['popdensity'] ** 2) * left_tracts['left_view']).sum()))
 print("Right popdensity*views: {}".format(((right_tracts['popdensity'] ** 2) * right_tracts['right_view']).sum()))
