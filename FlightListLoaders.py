@@ -25,7 +25,7 @@ class DatastoreListLoader(FlightListLoader):
     def load_flight_path_list(self, constraints):
         query = self.datastore_client.query(kind='FlightPoint')
         query.add_filter('Alt', '>', constraints['alt_lower_bound'])
-        logger.info("query assembled")
+        self.logger.info("query assembled")
 
         flights = {}
 
