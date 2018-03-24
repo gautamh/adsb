@@ -16,7 +16,7 @@ class FlightListLoader:
     def load_flight_path_list(self, constraints): raise NotImplementedError
 
 class DatastoreListLoader(FlightListLoader):
-    def __init__(selfs):
+    def __init__(self):
         self.logger = logging.getLogger()
         logging.basicConfig(level=logging.INFO)
 
