@@ -23,15 +23,15 @@ class DatastoreListLoader(FlightListLoader):
         self.datastore_client = datastore.Client()
 
     def load_flight_path_list(self, constraints):
-        query = datastore_client.query(kind='FlightPoint')
+        query = self.datastore_client.query(kind='FlightPoint')
         query.add_filter('Alt', '>', constraints['alt_lower_bound'])
         logger.info("query assembled")
 
         flights = {}
 
-        logger.info("fetching query")
+        self.logger.info("fetching query")
         query_iter = query.fetch()
-        logger.info("query fetched")
+        self.logger.info("query fetched")
         for entity in query_iter:
             flight_lat = entity['Lat']
             flight_long = entity['Long']
