@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 
+import geopy.distance
 from google.cloud import datastore
 
 class FlightListLoader:
@@ -44,6 +45,16 @@ class DatastoreListLoader(FlightListLoader):
                     flights[entity['Call']].sort(key=lambda x: x[2])
                 else:
                     flights[entity['Call']] = [(flight_lat, flight_long, time, entity['Call'])]
+        
+        filter_keys = []
+        for call in flights:
+            init_point = (flights[call][0][0], flights[call][0][1])
+            init_dist = geopy.distance.distance(init_point, (constraints['dest_lat'], constraints['dest_long'])).km
+            if (init_dist < constraints['init_dist_lower_bound']):
+                filter_keys.append(call)
+
+        for key in filter_keys:
+            flights.pop(key)
         return flights
 
 

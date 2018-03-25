@@ -40,7 +40,10 @@ constraints = {
     'alt_lower_bound': ALT_LOWER_BOUND,
     'alt_upper_bound': ALT_UPPER_BOUND,
     'dest': DEST,
-    'earliest_time': EARLIEST_TIME
+    'earliest_time': EARLIEST_TIME,
+    'dest_lat': DEST_LAT,
+    'dest_long': DEST_LONG,
+    'init_dist_lower_bound': 2.6
 }
 
 flights = {}
@@ -154,8 +157,8 @@ folium.GeoJson(
 ).add_to(m)
 
 for valid_flight in valid_flights:
-    for point in valid_flight:
-        folium.Marker([point[0], point[1]], popup="{} {}".format(point[3], point[2])).add_to(m)
+    #for point in valid_flight:
+        #folium.Marker([point[0], point[1]], popup="{} {}".format(point[3], point[2])).add_to(m)
     folium.PolyLine([(x[0], x[1]) for x in valid_flight]).add_to(m)
 
 folium.LayerControl().add_to(m)
@@ -163,7 +166,7 @@ m.save("index.html")
 
 ax1 = plot_tracts.plot_tracts_and_triangles(left_tracts, left_study_areas)
 plot_tracts.plot_tracts_and_triangles(right_tracts, right_study_areas, 'red', ax1)
-plt.show()
+#plt.show()
 
 print("Left popdensity*views: {}".format(((left_tracts['popdensity'] ** 2) * left_tracts['left_view']).sum()))
 print("Right popdensity*views: {}".format(((right_tracts['popdensity'] ** 2) * right_tracts['right_view']).sum()))
