@@ -93,8 +93,6 @@ right_study_areas = []
 
 logger.info("iterating over valid flights")
 for valid_flight in valid_flights:
-    #if valid_flight[0][3] == 'DAL2544':
-        #pdb.set_trace()
     studyareas = []
     for p1,p2 in zip(valid_flight, valid_flight[1:]):
         print([p1, p2])
@@ -117,8 +115,6 @@ for valid_flight in valid_flights:
         else:
             right_tract['right_view'] = 1
             right_tracts = right_tracts.append(right_tract)
-    #if valid_flight[0][3] == 'DAL2544':
-        #pdb.set_trace()
 
 left_view_density = left_tracts['popdensity'] * left_tracts['left_view']
 colormap1 = linear.YlGn.scale(
@@ -157,8 +153,8 @@ folium.GeoJson(
 ).add_to(m)
 
 for valid_flight in valid_flights:
-    #for point in valid_flight:
-        #folium.Marker([point[0], point[1]], popup="{} {}".format(point[3], point[2])).add_to(m)
+    for point in valid_flight:
+        folium.Marker([point[0], point[1]], popup="{} {}".format(point[3], point[2])).add_to(m)
     folium.PolyLine([(x[0], x[1]) for x in valid_flight]).add_to(m)
 
 folium.LayerControl().add_to(m)
