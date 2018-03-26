@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 import logging
 import os
 import sys
+import pdb
 
 import geopy.distance
 from google.cloud import datastore
@@ -50,8 +51,17 @@ class DatastoreListLoader(FlightListLoader):
         for call in flights:
             init_point = (flights[call][0][0], flights[call][0][1])
             init_dist = geopy.distance.distance(init_point, (constraints['dest_lat'], constraints['dest_long'])).km
-            if (init_dist < constraints['init_dist_lower_bound']):
+            if (init_dist > constraints['init_dist_upper_bound'] and call not in filter_keys):
                 filter_keys.append(call)
+            for i in range(len(flights[call])):
+                flightpoint = flights[call][i]
+                point = (flightpoint[0], flightpoint[1])
+                point_dist = geopy.distance.distance(point, (constraints['dest_lat'], constraints['dest_long'])).km
+                if (point_dist < constraints['init_dist_lower_bound']) and i < len(flights[call]) - 1:
+                    next_point = (flights[call][i + 1][0], flights[call][i + 1][1])
+                    next_point_dist = geopy.distance.distance(next_point, (constraints['dest_lat'], constraints['dest_long'])).km
+                    if (next_point_dist > point_dist and call not in filter_keys):
+                        filter_keys.append(call)
 
         for key in filter_keys:
             flights.pop(key)

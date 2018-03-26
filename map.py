@@ -43,7 +43,8 @@ constraints = {
     'earliest_time': EARLIEST_TIME,
     'dest_lat': DEST_LAT,
     'dest_long': DEST_LONG,
-    'init_dist_lower_bound': 2.6
+    'init_dist_lower_bound': 2.6,
+    'init_dist_upper_bound': 100.0
 }
 
 flights = {}
@@ -153,8 +154,8 @@ folium.GeoJson(
 ).add_to(m)
 
 for valid_flight in valid_flights:
-    for point in valid_flight:
-        folium.Marker([point[0], point[1]], popup="{} {}".format(point[3], point[2])).add_to(m)
+    #for point in valid_flight:
+        #folium.Marker([point[0], point[1]], popup="{} {}".format(point[3], point[2])).add_to(m)
     folium.PolyLine([(x[0], x[1]) for x in valid_flight]).add_to(m)
 
 folium.LayerControl().add_to(m)
