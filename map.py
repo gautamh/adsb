@@ -22,12 +22,19 @@ logging.basicConfig(level=logging.INFO)
 
 ALT_LOWER_BOUND = 50
 ALT_UPPER_BOUND = 2500
+
+#DEST= 'KDCA Ronald Reagan Washington National, United States'
+#DEST_LAT = 38.85120
+#DEST_LONG = -77.03774
+
 #DEST = 'KSEA Seattle Tacoma, United States'
-DEST= 'KDCA Ronald Reagan Washington National, United States'
-DEST_LAT = 38.85120
-DEST_LONG = -77.03774
 #DEST_LAT = 47.449474
 #DEST_LONG = -122.309912
+
+DEST = "KORD Chicago O'Hare, United States"
+DEST_LAT = 41.973782
+DEST_LONG = -87.907403
+
 EARLIEST_TIME = 1520607257490
 MIN_PATH_LENGTH = 5
 
