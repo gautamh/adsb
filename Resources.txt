@@ -11,3 +11,6 @@ https://github.com/JoeYerardi/data-analysis-and-visualization-in-python/blob/mas
 General Pandas:
 https://stackoverflow.com/questions/15891038/change-data-type-of-columns-in-pandas
 https://www.dataquest.io/blog/settingwithcopywarning/
+
+General Python:
+https://stackoverflow.com/questions/2124190/how-do-i-implement-interfaces-in-python
