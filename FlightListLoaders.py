@@ -10,12 +10,21 @@ from google.cloud import datastore
 class FlightListLoader:
     __metaclass__ = ABCMeta
 
+    ''' Validates supplied constraint dictionary.'''
+    @abstractmethod
+    def _validate_constraints(self, constraints): raise NotImplementedError
+
     ''' Loads a list of flight paths.
 
     Each flight path is a list of tuples (lat, long, time).
     '''
     @abstractmethod
-    def load_flight_path_list(self, constraints): raise NotImplementedError
+    def _load_flight_path_list_internal(self, constraints): raise NotImplementedError
+
+    ''' External method that validates constraints and then loads list of flight paths.'''
+    def load_flight_path_list(self, constraints):
+        self._validate_constraints(constraints)
+        return self._load_flight_path_list_internal(constraints)
 
 class DatastoreListLoader(FlightListLoader):
     def __init__(self):
@@ -23,8 +32,22 @@ class DatastoreListLoader(FlightListLoader):
         logging.basicConfig(level=logging.INFO)
 
         self.datastore_client = datastore.Client()
+        self.REQUIRED_CONSTRAINTS = [
+            'alt_lower_bound',
+            'dest',
+            'earliest_time',
+            'dest_lat',
+            'dest_long',
+            'init_dist_lower_bound',
+            'init_dist_upper_bound'
+        ]
 
-    def load_flight_path_list(self, constraints):
+    def _validate_constraints(self, constraints):
+        for required_constraint in self.REQUIRED_CONSTRAINTS:
+            if required_constraint not in constraints:
+                raise ValueError("Required constraint {} not provided".format(required_constraint))
+
+    def _load_flight_path_list_internal(self, constraints):
         query = self.datastore_client.query(kind='FlightPoint')
         query.add_filter('Alt', '>', constraints['alt_lower_bound'])
         self.logger.info("query assembled")
@@ -66,7 +89,3 @@ class DatastoreListLoader(FlightListLoader):
         for key in filter_keys:
             flights.pop(key)
         return flights
-
-
-
-
