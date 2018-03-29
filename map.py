@@ -88,6 +88,8 @@ for select_flight in flight_iter:
 
 logger.info("loading tracts")
 tracts = plot_tracts.load_tracts()
+# filter out tracts that aren't near the airport of interest
+# (speeds up intersection calculation time greatly)
 tracts = tracts[(~(tracts.INTPTLAT10.astype('float') > (DEST_LAT + 0.5))) & (~(tracts.INTPTLAT10.astype('float') < (DEST_LAT - 0.5))) & (~(tracts.INTPTLON10.astype('float') > (DEST_LONG + 1))) & (~(tracts.INTPTLON10.astype('float') < (DEST_LONG - 1)))]
 
 tracts['left_view'] = 0
@@ -102,21 +104,27 @@ right_study_areas = []
 logger.info("iterating over valid flights")
 for valid_flight in valid_flights:
     studyareas = []
-    for p1,p2 in zip(valid_flight, valid_flight[1:]):
+    for p1,p2 in zip(valid_flight, valid_flight[1:]): # for each flight segment
         print([p1, p2])
-        left_right = plot_tracts.generate_viewing_triangles(p1[1], p1[0], p2[1], p2[0], 0.1)
+        left_right = plot_tracts.generate_viewing_triangles(p1[1], p1[0], p2[1], p2[0], 0.1) # get triangles to left and right of segment
         studyareas.extend(left_right)
+    # get tracts that intersect with left and right triangles
     intersect_tracts = plot_tracts.get_triangle_tract_intersection(tracts, studyareas)
     intersect_tracts_left = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[::2])
     intersect_tracts_right = plot_tracts.get_triangle_tract_intersection(tracts, studyareas[1::2])
+
     left_study_areas.extend(studyareas[::2])
     right_study_areas.extend(studyareas[1::2])
+
+    # for each tract in a left triangle, increment that tract's left_view field by 1
     for index, left_tract in intersect_tracts_left.iterrows():
         if left_tract['GEOID10'] in left_tracts['GEOID10'].values:
             left_tracts.loc[left_tracts['GEOID10'] == left_tract['GEOID10'],'left_view'] += 1 # https://www.dataquest.io/blog/settingwithcopywarning/
         else:
             left_tract['left_view'] = 1
             left_tracts = left_tracts.append(left_tract)
+
+    # for each tract in a right triangle, increment that tract's right_view field by 1
     for index, right_tract in intersect_tracts_right.iterrows():
         if right_tract['GEOID10'] in right_tracts['GEOID10'].values:
             right_tracts.loc[right_tracts['GEOID10'] == right_tract['GEOID10'],'right_view'] += 1 # https://www.dataquest.io/blog/settingwithcopywarning/
@@ -124,6 +132,7 @@ for valid_flight in valid_flights:
             right_tract['right_view'] = 1
             right_tracts = right_tracts.append(right_tract)
 
+# set up folium/leaflet color scales for left and right view counts
 left_view_density = left_tracts['popdensity'] * left_tracts['left_view']
 colormap1 = linear.YlGn.scale(
     left_view_density.min(),
@@ -138,6 +147,8 @@ colormap2 = linear.BuPu.scale(
 colormap2.caption = 'Right View'
 colormap2.add_to(m)
 
+# create folium/leaflet layers with tracts plotted and shaded based on
+# left/right view counts
 folium.GeoJson(
     left_tracts,
     name='Left View',
@@ -160,18 +171,22 @@ folium.GeoJson(
     }
 ).add_to(m)
 
+# add flight paths to the folium map
 for valid_flight in valid_flights:
     #for point in valid_flight:
         #folium.Marker([point[0], point[1]], popup="{} {}".format(point[3], point[2])).add_to(m)
     folium.PolyLine([(x[0], x[1]) for x in valid_flight]).add_to(m)
 
+# save a webpage with the folium/leaflet map
 folium.LayerControl().add_to(m)
 m.save("index.html")
 
+# plot tracts and triangles with matplotlib to see the viewing triangles
 ax1 = plot_tracts.plot_tracts_and_triangles(left_tracts, left_study_areas)
 plot_tracts.plot_tracts_and_triangles(right_tracts, right_study_areas, 'red', ax1)
 #plt.show()
 
+# output sum of (population density)^2 * views for left_view and right_view fields of tracts
 print("Left popdensity*views: {}".format(((left_tracts['popdensity'] ** 2) * left_tracts['left_view']).sum()))
 print("Right popdensity*views: {}".format(((right_tracts['popdensity'] ** 2) * right_tracts['right_view']).sum()))
 
