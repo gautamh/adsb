@@ -49,6 +49,7 @@ VALID_TO = [
     "KORD Chicago O'Hare, United States"
 ]
 
+''' Determine whether a flight point scraped from the API should be saved to datastore. '''
 def should_record_flight(flightinfo, valid_to=None):
     if (valid_to is not None and ('To' not in flightinfo or flightinfo['To'] not in valid_to)):
         return False
