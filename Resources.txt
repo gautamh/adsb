@@ -24,3 +24,4 @@ https://www.dataquest.io/blog/settingwithcopywarning/
 General Python:
 https://stackoverflow.com/questions/2124190/how-do-i-implement-interfaces-in-python
 https://stackoverflow.com/questions/5384914/how-to-delete-items-from-a-dictionary-while-iterating-over-it
+https://stackoverflow.com/questions/256222/which-exception-should-i-raise-on-bad-illegal-argument-combinations-in-python
