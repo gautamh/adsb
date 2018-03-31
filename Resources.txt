@@ -8,6 +8,7 @@ Folium/Leaflet:
 http://andrewgaidus.com/leaflet_webmaps_python/
 https://python-visualization.github.io/folium/quickstart.html
 https://github.com/JoeYerardi/data-analysis-and-visualization-in-python/blob/master/population_change.ipynb (the last little bit)
+https://github.com/python-visualization/folium/blob/master/examples/Highlight_Function.ipynb
 
 Shapely:
 https://toblerity.org/shapely/shapely.html
