@@ -157,7 +157,13 @@ folium.GeoJson(
         'color': 'black',
         'fillOpacity': (feature['properties']['popdensity'] * feature['properties']['left_view'])/left_view_density.max(),
         'weight': 1
-    }
+    },
+    highlight_function=lambda feature: {
+        'fillColor': 'red',
+        'color': 'black',
+        'fillOpacity': (feature['properties']['popdensity'] * 1.0)/left_tracts['popdensity'].nlargest(10).iloc[1],
+        'weight': 3
+    },
 ).add_to(m)
 
 folium.GeoJson(
@@ -168,7 +174,13 @@ folium.GeoJson(
         'color': 'black',
         'fillOpacity': (feature['properties']['popdensity'] * feature['properties']['right_view'])/right_view_density.max(),
         'weight': 1
-    }
+    },
+    highlight_function=lambda feature: {
+        'fillColor': 'blue',
+        'color': 'black',
+        'fillOpacity': (feature['properties']['popdensity'] * 1.0)/right_tracts['popdensity'].nlargest(10).iloc[1],
+        'weight': 3
+    },
 ).add_to(m)
 
 # add flight paths to the folium map
