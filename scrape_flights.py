@@ -27,10 +27,14 @@ KDCA_long = -77.03774
 KORD_lat = 41.973782
 KORD_long = -87.907403
 
+KJFK_lat = 40.648870
+KJFK_long = -73.790043
+
 airport_coords = [
     #(KSEA_lat, KSEA_long)
     #(KDCA_lat, KDCA_long)
-    (KORD_lat, KORD_long)
+    #(KORD_lat, KORD_long)
+    (KJFK_lat, KFJK_long)
 ]
 
 
@@ -46,7 +50,8 @@ USER_AGENT_STR = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537
 VALID_TO = [
     'KDCA Ronald Reagan Washington National, United States',
     'KSEA Seattle Tacoma, United States',
-    "KORD Chicago O'Hare, United States"
+    "KORD Chicago O'Hare, United States",
+    'KJFK John F Kennedy, New York, United States'
 ]
 
 ''' Determine whether a flight point scraped from the API should be saved to datastore. '''
