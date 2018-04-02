@@ -34,7 +34,7 @@ airport_coords = [
     #(KSEA_lat, KSEA_long)
     #(KDCA_lat, KDCA_long)
     #(KORD_lat, KORD_long)
-    (KJFK_lat, KFJK_long)
+    (KJFK_lat, KJFK_long)
 ]
 
 
