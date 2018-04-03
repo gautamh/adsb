@@ -2,10 +2,28 @@
     padding-top: 5rem;
 }
 
-.starter-template {
-    padding: 3rem 1.5rem;
-    text-align: center;
+/* https://stackoverflow.com/questions/37323924/bootstrap-jumbotron-blurry-background-image-without-blurring-text*/
+.jumbotron > .bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("fivestar-34.jpg");
+    background-position: 0% 45%;
+    opacity: 1;
+    z-index: -1;
+    background-repeat: no-repeat;
+    background-size: cover;
+    max-height: 500px;
 }
+
+.jumbotron {
+    background-color: transparent;
+    color: #fff;
+    max-height: 500px;
+}
+
 /*
 TFL CSS
 version:   1.0 
@@ -94,4 +112,13 @@ body {
 .tfl-waterloocity {
     background: #95cdba;
     color: #000;
+}
+
+/*https://github.com/oakleyarts/css-tube-map */
+
+.station.vertical {
+    height: 7px;
+    width: 8px;
+    display: block;
+    line-height: 20px;
 }
