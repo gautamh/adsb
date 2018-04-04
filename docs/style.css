@@ -16,6 +16,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     max-height: 500px;
+    background-attachment: fixed; /*https://www.webnots.com/how-to-create-full-width-parallax-page-with-bootstrap-4-jumbotron/*/
 }
 
 .jumbotron {
