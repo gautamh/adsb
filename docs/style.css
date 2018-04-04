@@ -10,19 +10,24 @@
     right: 0;
     bottom: 0;
     background-image: url("fivestar-34.jpg");
-    background-position: 0% 45%;
+    background-position: 0% 100%;
     opacity: 1;
     z-index: -1;
     background-repeat: no-repeat;
     background-size: cover;
-    max-height: 500px;
+    height: 500px;
     background-attachment: fixed; /*https://www.webnots.com/how-to-create-full-width-parallax-page-with-bootstrap-4-jumbotron/*/
 }
 
 .jumbotron {
     background-color: transparent;
     color: #fff;
-    max-height: 500px;
+    margin-bottom: 0px;
+    padding-bottom: 300px;
+}
+
+p.lead {
+    margin-top: 5px;
 }
 
 /*
