@@ -30,6 +30,15 @@ p.lead {
     margin-top: 5px;
 }
 
+.map { /*https://www.w3schools.com/css/css_align.asp*/
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: inherit;
+    max-width: 700px;
+    height: 600px;
+}
+
 /*
 TFL CSS
 version:   1.0 
