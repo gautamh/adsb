@@ -64,14 +64,22 @@
         <div class="container map-container" id="KSEA">
             <h2>Seattle-Tacoma International Airport (KSEA)</h2>
             <iframe class="map" src="./examples/KSEAv1.html"></iframe>
+            <p>You're likely to see more population-dense areas if you take a window seat on the <b>right</b> side of the aircraft.</p>
         </div>
         <div class="container map-container" id="KFJK">
             <h2>New York John F. Kennedy International Airport (KFJK)</h2>
             <iframe class="map" src="./examples/KJFKv1.html"></iframe>
+            <p>You're likely to see more population-dense areas if you take a window seat on the <b>right</b> side of the aircraft.</p>
         </div>
         <div class="container map-container" id="KORD">
             <h2>Chicago O'Hare International Airport (KORD)</h2>
             <iframe class="map" src="./examples/KORDv1.html"></iframe>
+            <p>You're likely to see more population-dense areas if you take a window seat on the <b>left</b> side of the aircraft.</p>
+        </div>
+        <div class="container">
+            <h2>Methodology</h2>
+            The maps show census block groups shaded by (population density)^2 * (number of flights that see the block group).
+            The recommendations for picking a side of the airplane are based on summing the (population density)^2 * (number of flights that see the block group) for each block group seen out the left and right windows of the airplane, and then comparing the two calculated values.
         </div>
 
     </main><!-- /.container -->
