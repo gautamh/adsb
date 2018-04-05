@@ -31,9 +31,9 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Airports</a>
                     <div class="dropdown-menu" aria-labelledby="dropdown01">
-                        <a class="dropdown-item" href="#">KSEA</a>
-                        <a class="dropdown-item" href="#">KDCA</a>
-                        <a class="dropdown-item" href="#">KORD</a>
+                        <a class="dropdown-item" href="#KSEA">KSEA</a>
+                        <a class="dropdown-item" href="#KFJK">KFJK</a>
+                        <a class="dropdown-item" href="#KORD">KORD</a>
                     </div>
                 </li>
             </ul>
@@ -43,15 +43,15 @@
     <main role="main">
         <section class="jumbotron text-center">
             <div class="container">
-                <h1>The best seats on airplanes are window seats. <br/>But should you take the left or right window?</h1>
+                <h1>The best seats on airplanes are window seats. <br />But should you take the left or right window?</h1>
             </div>
             <div class="bg" />
         </section>
         <div class="container">
             <p class="lead">
-                Window seats are indisputably the best seats on the plane. 
-                Flying into New York, you can see the Manhattan skyline. 
-                Landing in Seattle, you can see the Space Needle. 
+                Window seats are indisputably the best seats on the plane.
+                Flying into New York, you can see the Manhattan skyline.
+                Landing in Seattle, you can see the Space Needle.
                 The distinctive River Visual approach into National Airport in DC provides a view of the Washington Monument, the White House, and other DC landmarks.
             </p>
             <p>
@@ -61,8 +61,17 @@
                 The insight of this project is that population density is a good proxy for the quality of the view which an area provides, so if you can figure out what sort of population density you are seeing out of each side of the plane on approach, you can determine which view is best:
             </p>
         </div>
-        <div class="container">
+        <div class="container map-container" id="KSEA">
+            <h2>Seattle-Tacoma International Airport (KSEA)</h2>
             <iframe class="map" src="./examples/KSEAv1.html"></iframe>
+        </div>
+        <div class="container map-container" id="KFJK">
+            <h2>New York John F. Kennedy International Airport (KFJK)</h2>
+            <iframe class="map" src="./examples/KJFKv1.html"></iframe>
+        </div>
+        <div class="container map-container" id="KORD">
+            <h2>Chicago O'Hare International Airport (KORD)</h2>
+            <iframe class="map" src="./examples/KORDv1.html"></iframe>
         </div>
 
     </main><!-- /.container -->
