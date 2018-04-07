@@ -30,3 +30,4 @@ https://stackoverflow.com/questions/256222/which-exception-should-i-raise-on-bad
 
 HTML:
 https://stackoverflow.com/questions/42393063/load-local-html-on-iframe
+http://webagility.com/posts/web-components-vs-iframes
