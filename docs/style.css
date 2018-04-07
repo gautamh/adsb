@@ -4,13 +4,10 @@
 
 /* https://stackoverflow.com/questions/37323924/bootstrap-jumbotron-blurry-background-image-without-blurring-text*/
 .jumbotron > .bg {
-    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url("fivestar-34-small.jpg");
-    background-position: 0% 100%;
     opacity: 1;
     z-index: -1;
     background-repeat: no-repeat;
@@ -23,8 +20,29 @@
     background-color: transparent;
     color: #fff;
     margin-bottom: 0px;
+    
+}
+
+.header {
     padding-bottom: 300px;
 }
+
+.interstitial {
+    padding: 10px 0px;
+}
+
+#header-image {
+    position: absolute;
+    background-image: url("fivestar-34-small.jpg");
+    background-position: 0% 100%;
+}
+
+#inerstitial-image-1 {
+    background-image: url("KSEA_approach-small.jpg");
+    position: relative;
+    padding-bottom: 0px;
+}
+
 
 p.lead {
     margin-top: 5px;
