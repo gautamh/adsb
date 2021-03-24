@@ -49,7 +49,7 @@ python-dateutil==2.6.1
 pytz==2018.3
 requests==2.18.4
 roman==2.0.0
-rsa==3.4.2
+rsa==4.1
 Shapely==1.6.4.post1
 six==1.11.0
 stevedore==1.25.0
