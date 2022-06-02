@@ -23,7 +23,7 @@ google-cloud-core==0.28.1
 google-cloud-datastore==1.6.0
 googleapis-common-protos==1.5.3
 grpcio==1.10.0
-html5lib==0.999
+html5lib==0.99999999
 idna==2.6
 Jinja2==2.10
 jmespath==0.2.1
